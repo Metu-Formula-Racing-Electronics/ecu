@@ -8,4 +8,5 @@ void setup() {
 void loop() {
   int a = readSensor();
   // put your main code here, to run repeatedly:
+  //master brachteyim
 }
