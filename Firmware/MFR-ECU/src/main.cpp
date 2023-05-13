@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "sensor.h"
-
+#include "APPS.h"
 void setup() {
   // put your setup code here, to run once:
 }
