@@ -11,8 +11,8 @@ float AppsRead() {
     int difference, Apps1deger, Apps2deger;
     float AppsOrtValue;
     
-    Apps1deger= analogRead(APPS1PIN)*100/255;
-    Apps2deger= analogRead(APPS2PIN)*100/255;
+    Apps1deger= analogRead(APPS1PIN)*100/4095;
+    Apps2deger= analogRead(APPS2PIN)*100/4095;
     difference = abs(Apps1deger-Apps2deger);
     AppsOrtValue = ((Apps1deger+Apps2deger)/2) ;
 
