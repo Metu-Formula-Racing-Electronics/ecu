@@ -1,0 +1,3 @@
+void startLcd();
+
+string readLcd();
