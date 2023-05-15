@@ -1,3 +1,3 @@
 void startLcd();
 
-string readLcd();
+void writeLcd(int speed, int rpm, float current);

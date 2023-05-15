@@ -3,16 +3,23 @@
 #include "Nextion.h"
 #include <SPI.h>
 #include <SD.h>
+#include "lcd.h"
 
-String readLcd(int speed, int rpm, float current)
+NexText textSpeedValue;
+NexText textRPMValue;
+NexText textCurrentValue;
+
+void startLcd()
 {
     nexInit();
     
-    NexText textSpeedValue = NexText(0,4,"textSpeedValue");
-    NexText textRPMValue = NexText(0,4,"textRPMValue");
-    NexText textCurrentValue = NexText(0,4,"textCurrentValue");
+    textSpeedValue = NexText(0,4,"textSpeedValue");
+    textRPMValue = NexText(0,4,"textRPMValue");
+    textCurrentValue = NexText(0,4,"textCurrentValue");
+}
 
-
+void writeLcd(int speed, int rpm, float current)
+{
     char speedTemp[10] = {0}; 
     itoa(speed, speedTemp, 10);
 
@@ -26,5 +33,4 @@ String readLcd(int speed, int rpm, float current)
     textRPMValue.setText(rpmTemp);
     textCurrentValue.setText(currentTemp);
 
-    return(speedTemp, rpmTemp, currentTemp);
 }
