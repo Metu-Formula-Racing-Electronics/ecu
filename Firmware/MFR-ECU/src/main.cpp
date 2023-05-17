@@ -1,12 +1,29 @@
-#include <Arduino.h>
-#include "sensor.h"
+#include <SPI.h>
+#include <lcd.h>
+#include <analog.h>
 
-void setup() {
-  // put your setup code here, to run once:
-}
 
-void loop() {
-  int a = readSensor();
-  // put your main code here, to run repeatedly:
-  //master brachteyim
+int  main() 
+{
+  Serial.begin(9600);
+
+  lcd* nextion = new lcd();
+  analog* pot = new analog(35,10,15);
+
+  nextion->setup();
+  pot->setup();
+
+
+  while(true)
+  {
+
+      pot->readAnalog(pot->mAnalogPin);
+
+      nextion->writeSensor(pot->mAnalogRawResult,pot->mAnalogFilteredResult,0);
+
+      delay(100);
+  }
+
+
+  return 0;
 }
