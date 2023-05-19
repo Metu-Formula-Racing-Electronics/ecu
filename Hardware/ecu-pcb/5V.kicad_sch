@@ -1201,7 +1201,7 @@
     (uuid 42550b2f-d868-44cc-a75d-bfb904305a3d)
     (property "Reference" "TP3" (id 0) (at 28.448 87.63 90))
     (property "Value" "TestPoint" (id 1) (at 28.448 90.17 90))
-    (property "Footprint" "" (id 2) (at 31.75 88.9 0)
+    (property "Footprint" "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm_LowProfile" (id 2) (at 31.75 88.9 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 31.75 88.9 0)

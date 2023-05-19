@@ -1063,7 +1063,7 @@
     (uuid ddffdb3c-5405-447d-addc-3269fdd5851e)
     (property "Reference" "JP1" (id 0) (at 192.024 53.34 0))
     (property "Value" "SolderJumper_3_Bridged12" (id 1) (at 192.024 55.88 0))
-    (property "Footprint" "" (id 2) (at 192.024 59.817 0)
+    (property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_Pad1.0x1.5mm_NumberLabels" (id 2) (at 192.024 59.817 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 192.024 59.817 0)
