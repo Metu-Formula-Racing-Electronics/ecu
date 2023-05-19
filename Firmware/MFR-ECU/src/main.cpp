@@ -8,7 +8,7 @@ int  main()
   Serial.begin(9600);
 
   lcd* nextion = new lcd();
-  analog* pot = new analog(35,10,15);
+  analog* pot = new analog(35,10,15);//Test for analog sensor was put in Analog pin 35 in esp 32.
 
   nextion->setup();
   pot->setup();
