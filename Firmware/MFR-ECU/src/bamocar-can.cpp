@@ -30,6 +30,7 @@ int CANmsg::write_data(long data){
     //to be implemented
     
     /*for (int i = 0; i < 8; i++){
+            ???
             _data[i] = (data >> 8*i) & 0xFF;
 
     }*/
