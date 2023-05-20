@@ -3,26 +3,28 @@
 #include "mp3.h"
 #include "SPIFFS.h"
 
+
 void setup() {
   //TEST CODE FOR THE SPIFFS 
-  // Serial.begin(115200);
+  delay(1000);
+  Serial.begin(115200);
 
-  // if (!SPIFFS.begin(true)) {
-  //   Serial.println("An Error has occurred while mounting SPIFFS");
-  //   return;
-  // }
+  if (!SPIFFS.begin(true)) {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
  
-  // File root = SPIFFS.open("/");
+  File root = SPIFFS.open("/");
  
-  // File file = root.openNextFile();
+  File file = root.openNextFile();
  
-  // while(file){
+  while(file){
  
-  //     Serial.print("FILE: ");
-  //     Serial.println(file.name());
+      Serial.print("FILE: ");
+      Serial.println(file.name());
  
-  //     file = root.openNextFile();
-  // }
+      file = root.openNextFile();
+  }
 
   mp3_setup();
 }
@@ -30,6 +32,5 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //master brachteyim
-  // mp3_loop();
   mp3_loop();
 }

@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #if defined(ARDUINO_ARCH_RP2040)
-
+void setup() {}
+void loop() {}
 #else
 
 #ifdef ESP32
   #include <WiFi.h>
   #include "SPIFFS.h"
-
+#else
+  #include <ESP8266WiFi.h>
 #endif
 #include "AudioFileSourceSPIFFS.h"
 #include "AudioFileSourceID3.h"
@@ -19,7 +21,6 @@
 
 // pno_cs from https://ccrma.stanford.edu/~jos/pasp/Sound_Examples.html
 
-
 AudioGeneratorMP3 *mp3;
 AudioFileSourceSPIFFS *file;
 AudioOutputI2S *out;
@@ -27,7 +28,7 @@ AudioFileSourceID3 *id3;
 
 
 // Called when a metadata event occurs (i.e. an ID3 tag, an ICY block, etc.
-void mp3_MDCallback(void *cbData, const char *type, bool isUnicode, const char *string)
+void MDCallback(void *cbData, const char *type, bool isUnicode, const char *string)
 {
   (void)cbData;
   Serial.printf("ID3 callback for: %s = '", type);
@@ -52,13 +53,14 @@ void mp3_setup()
 {
   WiFi.mode(WIFI_OFF); 
   Serial.begin(115200);
+  delay(1000);
   SPIFFS.begin();
   Serial.printf("Sample MP3 playback begins...\n");
 
   audioLogger = &Serial;
-  file = new AudioFileSourceSPIFFS("soundfile.mp3");
+  file = new AudioFileSourceSPIFFS("/pno-cs.mp3");
   id3 = new AudioFileSourceID3(file);
-  id3->RegisterMetadataCB(mp3_MDCallback, (void*)"ID3TAG");
+  id3->RegisterMetadataCB(MDCallback, (void*)"ID3TAG");
   out = new AudioOutputI2S(0,1);
   mp3 = new AudioGeneratorMP3();
   mp3->begin(id3, out);
@@ -67,9 +69,10 @@ void mp3_setup()
 void mp3_loop()
 {
   if (mp3->isRunning()) {
-    if (mp3->loop()) mp3->stop();
+    if (!mp3->loop()) mp3->stop();
   } else {
     Serial.printf("MP3 done\n");
+    delay(1000);
   }
 }
 #endif
