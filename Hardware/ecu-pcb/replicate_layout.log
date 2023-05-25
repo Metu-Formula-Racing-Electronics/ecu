@@ -1,0 +1,57 @@
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 359:Plugin executed on: 'darwin'
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 360:Plugin executed with python version: '3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18) \n[Clang 6.0 (clang-600.0.57)]'
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 361:KiCad build version: (6.0.10-0)
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 362:Plugin version: 1.3.3
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 363:Frame repr: <wx._core.Frame object at 0x7f7f81803940>
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 387:Preparing replicator with CN4 as a reference
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 113:getting a list of all footprints on board
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 435:source anchor footprint is 'CN4'
+Located on: ['APPS', 'Isolated Pot1']
+With filenames: ['apps.kicad_sch', 'iso.kicad_sch']
+With sheet_id:['APPS', 'Isolated Pot1']
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 442:Corresponding footprints are 
+[('CN6', ['APPS', 'Isolated Pot']), ('CN4', ['APPS', 'Isolated Pot1'])]
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 454:Showing dialog
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 385:constructing a list of sheets suitable for replication on level:'Isolated Pot1', file:'iso.kicad_sch'
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 422:suitable sheets are:[['APPS', 'Isolated Pot']]
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1348:Level selected: ['APPS', 'Isolated Pot1']
+05-25 16:10:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1183:Filtering list of tracks
+05-25 16:10:57 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 460:Toolbar position: wx.Point(1478, 100)
+05-25 16:10:57 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 465:Dialog position: wx.Point(1114, 100)
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 385:constructing a list of sheets suitable for replication on level:'Isolated Pot1', file:'iso.kicad_sch'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 422:suitable sheets are:[['APPS', 'Isolated Pot']]
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 207:Replicating layout
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 231:Starting replication of sheets: [['APPS', 'Isolated Pot']]
+on level: ['APPS', 'Isolated Pot1']
+with tracks=True, zone=True, text=True, text=True, intersecting=False, remove=False, locked footprints=False, group_only=False
+05-25 16:11:02 root 299:updating GUI message: 'Preparing for replication'
+05-25 16:11:02 root 304:updating GUI with: 0
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 301:Getting the list of source footprints
+05-25 16:11:02 root 304:updating GUI with: 0
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 311:Getting the list of all the remaining footprints
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 318:Getting source tracks
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1183:Filtering list of tracks
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 322:Getting source zones
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 326:Getting source text items
+05-25 16:11:02 root 304:updating GUI with: 66
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 330:Getting source drawing items
+05-25 16:11:02 root 299:updating GUI message: 'Replicating footprints'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 734:Replicating footprints
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 740:Replicating footprints on sheet ['APPS', 'Isolated Pot']
+05-25 16:11:02 root 304:updating GUI with: 100
+05-25 16:11:02 root 299:updating GUI message: 'Replicating tracks'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 899:Replicating tracks
+05-25 16:11:02 root 304:updating GUI with: 0
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 905:Replicating tracks on sheet ['APPS', 'Isolated Pot']
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 729:Net pairs for sheet ['APPS', 'Isolated Pot'] :[('Net-(C45-Pad2)', 'Net-(C52-Pad2)'), ('GND', 'GND'), ('Net-(C42-Pad2)', 'Net-(C49-Pad2)'), ('/APPS/Isolated Pot1/Apps_5v', '/APPS/Isolated Pot/Apps_5v'), ('Net-(CN4-Pad1)', 'Net-(CN6-Pad1)'), ('+12V', '+12V'), ('/APPS/Isolated Pot1/OUT', '/APPS/Isolated Pot/OUT'), ('Net-(CN4-Pad2)', 'Net-(CN6-Pad2)')]
+05-25 16:11:02 root 299:updating GUI message: 'Replicating zones'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 959:Replicating zones
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 966:Replicating zones on sheet ['APPS', 'Isolated Pot']
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 729:Net pairs for sheet ['APPS', 'Isolated Pot'] :[('Net-(C45-Pad2)', 'Net-(C52-Pad2)'), ('GND', 'GND'), ('Net-(C42-Pad2)', 'Net-(C49-Pad2)'), ('/APPS/Isolated Pot1/Apps_5v', '/APPS/Isolated Pot/Apps_5v'), ('Net-(CN4-Pad1)', 'Net-(CN6-Pad1)'), ('+12V', '+12V'), ('/APPS/Isolated Pot1/OUT', '/APPS/Isolated Pot/OUT'), ('Net-(CN4-Pad2)', 'Net-(CN6-Pad2)')]
+05-25 16:11:02 root 299:updating GUI message: 'Replicating text'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1039:Replicating text
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1046:Replicating text on sheet ['APPS', 'Isolated Pot']
+05-25 16:11:02 root 299:updating GUI message: 'Replicating drawings'
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1080:Replicating drawings
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1086:Replicating drawings on sheet ['APPS', 'Isolated Pot']
+05-25 16:11:02 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 223:Replication complete
