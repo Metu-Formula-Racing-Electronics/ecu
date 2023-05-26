@@ -1729,7 +1729,7 @@
     (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/caedc891-1e90-4322-b5f8-e4291e85825c"
       (reference "#PWR0115") (unit 1) (value "GND") (footprint "")
     )
-    (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/798ff891-f5bc-4023-b4c8-ce0bbb19b596"
+    (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/9c6e7ada-7853-48cb-9d30-19ee8f00be38"
       (reference "#PWR0116") (unit 1) (value "GND") (footprint "")
     )
     (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/f82b0f34-f0b7-4743-b64b-4bf2048923ab"
@@ -2100,6 +2100,9 @@
     )
     (path "/df8a93c8-56a7-4b21-8898-f053b5e941e5/480f0556-d191-484b-a166-531c442b2c1e"
       (reference "#PWR0239") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/1b9d8bfc-627a-4bf3-9fd7-dd354446688f"
+      (reference "#PWR0240") (unit 1) (value "GND") (footprint "")
     )
     (path "/058c7361-f00b-4c19-a1fd-8be51eb495d8"
       (reference "C1") (unit 1) (value "100nF") (footprint "easyeda2kicad:C0402_NEW")
@@ -2647,8 +2650,8 @@
     (path "/d4192004-3b59-46f4-b087-7b74e56b8ac4/d78d3bd4-41a9-470f-9aec-4cd6c6df9180"
       (reference "U11") (unit 1) (value "B4B-XH-A(LF)(SN)") (footprint "easyeda2kicad:CONN-TH_B4B-XH-A-LF-SN")
     )
-    (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/e8991644-b4e0-4599-a96e-2a6ca8a66461"
-      (reference "USB1") (unit 1) (value "10118193-0001LF") (footprint "easyeda2kicad:MICRO-USB-SMD_10118193-0001LF")
+    (path "/0490dd98-fbf9-436f-b3c5-44a2db184267/6cc5983f-be60-4f98-b509-a977cb9214d0"
+      (reference "USB1") (unit 1) (value "U-E-M5DD-W-2") (footprint "easyeda2kicad:MICRO-USB-TH_U-E-M5DD-W-2")
     )
   )
 )
