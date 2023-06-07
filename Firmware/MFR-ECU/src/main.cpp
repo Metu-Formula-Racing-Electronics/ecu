@@ -2,11 +2,12 @@
 #include "sensor.h"
 #include "APPS.h"
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
 }
 
 void loop() {
-  int a = readSensor();
-  // put your main code here, to run repeatedly:
-  //master brachteyim
+  
+  Serial.println(AppsRead());
+  delay(100);
+
 }
