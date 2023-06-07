@@ -121,7 +121,7 @@ void deleteFile(fs::FS &fs, const char * path){
 
 // TO INITIALIZE SD CARD
 
-void setup(){
+void SD_setup(){
   Serial.begin(115200);
   if(!SD.begin()){
     Serial.println("Card Mount Failed");
@@ -136,9 +136,9 @@ void setup(){
   createDir(SD, "/deneme");
   readFile(SD,"/deneme.txt");
   writeFile(SD,"/deneme.txt","HELLO WORLD");
-  appendFile(SD,"/deneme.txt","appendledim zaa\n");
+  appendFile(SD,"/deneme.txt","sdazaa\n");
 }  
-void loop(){
+void SD_loop(){
   appendFile(SD,"/deneme.txt", "zaa appendledim");
   delay(1000);
 }
