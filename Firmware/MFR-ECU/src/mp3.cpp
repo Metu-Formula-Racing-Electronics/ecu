@@ -24,7 +24,7 @@ void loop() {}
 AudioGeneratorMP3 *mp3;
 AudioFileSourceSPIFFS *file;
 AudioOutputI2S *out;
-AudioFileSourceID3 *id3;
+AudioFileSourceID3 *id3_1,*id3_2;
 
 
 // Called when a metadata event occurs (i.e. an ID3 tag, an ICY block, etc.
@@ -57,13 +57,19 @@ void mp3_setup()
   SPIFFS.begin();
   Serial.printf("Sample MP3 playback begins...\n");
 
+  out = new AudioOutputI2S(0,1);
+
   audioLogger = &Serial;
   file = new AudioFileSourceSPIFFS("/pno-cs.mp3");
-  id3 = new AudioFileSourceID3(file);
-  id3->RegisterMetadataCB(MDCallback, (void*)"ID3TAG");
-  out = new AudioOutputI2S(0,1);
+  id3_1 = new AudioFileSourceID3(file);
+  id3_1->RegisterMetadataCB(MDCallback, (void*)"ID3TAG_1");
   mp3 = new AudioGeneratorMP3();
-  mp3->begin(id3, out);
+  mp3->begin(id3_1, out);
+
+  file = new AudioFileSourceSPIFFS("/soundfile.mp3");
+  id3_2 = new AudioFileSourceID3(file);
+  id3_2->RegisterMetadataCB(MDCallback, (void*)"ID3TAG_2");
+  
 }
 
 void mp3_loop()
@@ -72,7 +78,8 @@ void mp3_loop()
     if (!mp3->loop()) mp3->stop();
   } else {
     Serial.printf("MP3 done\n");
-    delay(1000);
+    delay(5000);
+    mp3->begin(id3_2, out);
   }
 }
 #endif
