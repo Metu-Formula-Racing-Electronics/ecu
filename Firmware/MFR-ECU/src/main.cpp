@@ -1,29 +1,17 @@
-#include <SPI.h>
-#include <lcd.h>
-#include <analog.h>
+#include <Arduino.h>
+#include <NEXTlcd.h>
 
 
-int  main() 
+void setup()
 {
   Serial.begin(9600);
+}
 
-  lcd* nextion = new lcd();
-  analog* pot = new analog(35,10,15);//Test for analog sensor was put in Analog pin 35 in esp 32.
+void loop(){
 
-  nextion->setup();
-  pot->setup();
-
-
-  while(true)
-  {
-
-      pot->readAnalog(pot->mAnalogPin);
-
-      nextion->writeSensor(pot->mAnalogRawResult,pot->mAnalogFilteredResult,0);
-
-      delay(100);
-  }
-
-
-  return 0;
+    for (int i = 0; i < 9; i++)
+    {
+      nextlcd::writeSensor(i * 100, i *10);
+      delay(500);
+    }
 }
