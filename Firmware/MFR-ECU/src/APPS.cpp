@@ -1,8 +1,8 @@
 #include "sensor.h"
 #include <Arduino.h>
 
-#define APPS1PIN 4
-#define APPS2PIN 5
+#define APPS1PIN 36
+#define APPS2PIN 39
 
 int AppsError(){
     return -1;
