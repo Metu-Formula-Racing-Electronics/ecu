@@ -41,6 +41,4 @@
 #define REG_REQUEST       0x3D  //Transmission request
 #define REG_HARD_ENABLED  0xE8  //Hard Enabled State
 
-
-
 #endif

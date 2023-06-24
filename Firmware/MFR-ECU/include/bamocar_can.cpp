@@ -157,6 +157,7 @@ bool Bamocar_data::setAccel(int16_t accel) {
     return _sendCAN(Bamocar_dataframe(REG_RAMP_ACC, (int16_t)accel));
 }
 
+// Decel
 bool Bamocar_data::setDecel(int16_t decel) {
     return _sendCAN(Bamocar_dataframe(REG_RAMP_DEC, (int16_t)decel));
 }
@@ -231,7 +232,7 @@ bool Bamocar_data::requestStatus(uint8_t interval) {
     return _requestData(REG_STATUS, interval);
 }
 
-// Enable or disable transmission
+// Enable or disable controller
 void Bamocar_data::setSoftEnable(bool enable) {
     uint8_t Bamocar_dataframe2 = 0;
 
