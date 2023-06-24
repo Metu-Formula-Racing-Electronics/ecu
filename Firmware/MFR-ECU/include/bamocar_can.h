@@ -157,7 +157,7 @@ class Bamocar_data{
         bool _requestData(uint8_t dataAddress, uint8_t interval = INTVL_ONCE);
         void _listenCAN();
 
-        bool _parseMessage(can_message_t &msg);
+        bool parseMessage(can_message_t &msg);
         int16_t const _getData16Bit(can_message_t &msg);
         int32_t const _getData32Bit(can_message_t &msg);
 
