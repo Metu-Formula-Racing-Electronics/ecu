@@ -13,7 +13,7 @@ int AppsRead() {
     
     Apps1deger= analogRead(APPS1PIN);
     Apps1 = Apps1deger*100/4095;
-    Apps2deger= analogRead(APPS2PIN)*100/4095;
+    Apps2deger= 2048-analogRead(APPS2PIN)*100/4095;         //  (Hangi pin olduğunu kontrol et)
     Apps2 = Apps2deger*100/4095;
     difference = abs(Apps1-Apps2);
     AppsOrtValue = ((Apps1deger+Apps2deger)/2) ;

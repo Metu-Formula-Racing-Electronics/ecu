@@ -8,10 +8,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(analogRead(APPS1PIN));
-  Serial.print(" ");
-  Serial.println(analogRead(APPS2PIN));
-  /*Serial.println(AppsRead());*/
+  Serial.println(AppsRead());
   delay(100);
 
 }
