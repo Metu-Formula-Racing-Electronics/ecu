@@ -7,9 +7,7 @@
 #include <freertos/task.h>
 #include "driver/gpio.h"
 #include "driver/can.h"
-#include <NextLCD.h>
 #include <Bamocar_can.h>
-#include <DFPlayer.h>
 
 // Do NOT use GPIO 25 and 26, its used by R2DS audio (RELAY2 unusable)
 //  GPIO 16 and 17 are used for Serial2
@@ -52,8 +50,8 @@ bool apps_reverse = false;
 Bamocar_data bamocar(0x181, 0x201); // Bamocar CAN ID's
 can_message_t can_message;
 
-nextlcd lcd(&Serial2);
-musicPlayer mp(&Serial2);
+// nextlcd lcd(&Serial2);
+// musicPlayer mp(&Serial2);
 
 static void can_rx_task(void *args)
 {
