@@ -47,6 +47,8 @@ uint8_t state = 0;
 uint8_t apps_implausable = 0;
 int apps_avg = 0;
 
+bool apps_reverse = false;
+
 Bamocar_data bamocar(0x181, 0x201); // Bamocar CAN ID's
 can_message_t can_message;
 
@@ -61,10 +63,10 @@ static void can_rx_task(void *args)
     // Wait for message to be received
     if (can_receive(&message, pdMS_TO_TICKS(100)) == ESP_OK)
     {
-     // printf("Message received\n");
+      // printf("Message received\n");
       if (bamocar.parseMessage(message))
       {
-        //printf("Bamocar parsed\n");
+        // printf("Bamocar parsed\n");
       }
       else if (message.identifier == 0x31)
       {
@@ -98,7 +100,7 @@ static void debug_task(void *args)
 {
   while (1)
   {
-    //printf("Voltages: \t%d \n",  bamocar.getBusVoltage());
+    // printf("Voltages: \t%d \n",  bamocar.getBusVoltage());
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
@@ -122,7 +124,7 @@ void read_brake();
 
 static void TSAL_task(void *args)
 {
-  //bamocar.requestBattVoltage(200);
+  // bamocar.requestBattVoltage(200);
   bamocar.requestBusVoltage(200);
   while (1)
   {
@@ -151,16 +153,15 @@ static void can_tx_task(void *args)
   {
     vTaskDelay(pdMS_TO_TICKS(100));
   }*/
-  
-    bamocar.setSoftEnable(true);
 
+  bamocar.setSoftEnable(true);
 
   while (1)
   {
-    read_apps();//deneme için
+    read_apps(); // deneme için
     read_brake();
 
-    bamocar.setSpeed((apps_avg * -0x7fff) / 100);//deneme için
+    bamocar.setSpeed((apps_avg * -0x7fff) / 100); // deneme için
     if (state != last_state && state != 3)
     {
       bamocar.setSoftEnable(false);
@@ -208,6 +209,10 @@ void read_apps()
   apps1 = 100 - ((float)constrain(analogRead(APPS1PIN), APPS1LOW, APPS1HIGH) - APPS1LOW) / (APPS1HIGH - APPS1LOW) * 100;
   apps2 = ((float)constrain(analogRead(APPS2PIN), APPS2LOW, APPS2HIGH) - APPS2LOW) / (APPS2HIGH - APPS2LOW) * 100;
   apps_avg = (apps1 + apps2) / 2;
+
+  if (apps_reverse)
+    apps_avg = 100 - apps_avg;
+
   if (apps_avg < 50)
   {
     correction = sqrt(2.5 * apps_avg);
@@ -221,7 +226,7 @@ void read_apps()
     apps2 -= correction;
   }
   diff = abs(apps1 - apps2);
-  //printf("APPS: \t%d \t %d \t %d \t %d\n", apps1, apps2, diff, apps_avg);
+  // printf("APPS: \t%d \t %d \t %d \t %d\n", apps1, apps2, diff, apps_avg);
   if (diff > 10)
   {
     apps_implausable++;
@@ -274,9 +279,21 @@ void setup()
   digitalWrite(AIR, LOW);
   digitalWrite(TSAL_GREEN, HIGH);
   digitalWrite(TSAL_RED, LOW);
-  //digitalWrite(ASSI_BLUE, LOW);
-  //digitalWrite(ASSI_YELLOW, LOW);
+  // digitalWrite(ASSI_BLUE, LOW);
+  // digitalWrite(ASSI_YELLOW, LOW);
   digitalWrite(AMP_EN, HIGH); // Energize the amplifier
+
+  read_apps();
+  if(apps_avg < 50)
+  {
+    apps_reverse = false;
+  }
+  else
+  {
+    apps_reverse = true;
+  }
+
+
   // CANBUS
   can_general_config_t g_config = CAN_GENERAL_CONFIG_DEFAULT(CAND, CANR, CAN_MODE_NORMAL);
   can_timing_config_t t_config = CAN_TIMING_CONFIG_500KBITS();
@@ -407,7 +424,6 @@ void loop()
 
   if (!get_r2d_state())
   {
-    mp.playFirst();
     state = 2;
     yield();
     return;
