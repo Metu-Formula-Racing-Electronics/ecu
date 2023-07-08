@@ -45,6 +45,9 @@ void mp3_loop()
   if (mp3->isRunning()) {
     if (!mp3->loop()) mp3->stop();
   }
+  else {
+    mp3->begin(file1, out);
+  }
 }
 
 bool mp3_r2ds(){

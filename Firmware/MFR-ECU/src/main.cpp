@@ -262,24 +262,14 @@ void setup()
   can_timing_config_t t_config = CAN_TIMING_CONFIG_500KBITS();
   can_filter_config_t f_config = CAN_FILTER_CONFIG_ACCEPT_ALL();
   // Install CAN driver
-  if (can_driver_install(&g_config, &t_config, &f_config) == ESP_OK)
-  {
-    printf("Driver installed\n");
-  }
-  else
+  if (can_driver_install(&g_config, &t_config, &f_config) != ESP_OK)
   {
     printf("Failed to install driver\n");
-    return;
   }
   // Start CAN driver
-  if (can_start() == ESP_OK)
-  {
-    printf("Driver started\n");
-  }
-  else
+  if (can_start() != ESP_OK)
   {
     printf("Failed to start driver\n");
-    return;
   }
   // Configure message to transmit
   can_message.identifier = 0xAAAA;
@@ -289,18 +279,19 @@ void setup()
   {
     can_message.data[i] = 7;
   }
-  xTaskCreate(&can_rx_task, "can_rx_task", 4096, NULL, 5, NULL);
+  // xTaskCreate(&can_rx_task, "can_rx_task", 4096, NULL, 5, NULL);
 
-  delay(5000);
+  // delay(5000);
 
-  xTaskCreate(&TSAL_task, "TSAL_task", 4096, NULL, 5, NULL);
-  xTaskCreate(&debug_task, "debug_task", 4096, NULL, 5, NULL);
-  xTaskCreate(&can_tx_task, "can_tx_task", 4096, NULL, 5, NULL);
+  // xTaskCreate(&TSAL_task, "TSAL_task", 4096, NULL, 5, NULL);
+  // xTaskCreate(&debug_task, "debug_task", 4096, NULL, 5, NULL);
+  // xTaskCreate(&can_tx_task, "can_tx_task", 4096, NULL, 5, NULL);
 
   Serial.begin(115200);
   Serial2.begin(9600, SERIAL_8N1, 17, 16);
 
   mp3_setup();
+    mp3_r2ds();
 }
 
 bool get_shutdown_state()
@@ -353,44 +344,44 @@ void loop()
 {
   mp3_loop();
 
-  if (!get_shutdown_state())
-  {
-    digitalWrite(PRECHARGE, LOW);
-    digitalWrite(AIR, LOW);
-    state = 0;
-    yield();
-    return;
-  }
+  // if (!get_shutdown_state())
+  // {
+  //   digitalWrite(PRECHARGE, LOW);
+  //   digitalWrite(AIR, LOW);
+  //   state = 0;
+  //   yield();
+  //   return;
+  // }
 
-  if (state = 0)
-  {
-    digitalWrite(PRECHARGE, HIGH);
-    state = 1;
-  }
+  // if (state = 0)
+  // {
+  //   digitalWrite(PRECHARGE, HIGH);
+  //   state = 1;
+  // }
 
-  if (bamocar.getBattVoltage() < 420)
-  {
-    state = 1;
-    digitalWrite(AIR, LOW);
-    yield();
-    return;
-  }
+  // if (bamocar.getBattVoltage() < 420)
+  // {
+  //   state = 1;
+  //   digitalWrite(AIR, LOW);
+  //   yield();
+  //   return;
+  // }
 
-  if (state == 1)
-  {
-    state = 2;
-    digitalWrite(AIR, HIGH);
-    delay(20);
-    digitalWrite(PRECHARGE, LOW);
-  }
+  // if (state == 1)
+  // {
+  //   state = 2;
+  //   digitalWrite(AIR, HIGH);
+  //   delay(20);
+  //   digitalWrite(PRECHARGE, LOW);
+  // }
 
-  if (!get_r2d_state())
-  {
-    state = 2;
-    yield();
-    return;
-  }
+  // if (!get_r2d_state())
+  // {
+  //   state = 2;
+  //   yield();
+  //   return;
+  // }
 
-  state = 3;
+  // state = 3;
   vTaskDelay(pdMS_TO_TICKS(100));
 }
