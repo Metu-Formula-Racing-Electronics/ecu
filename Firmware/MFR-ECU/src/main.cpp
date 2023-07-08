@@ -9,6 +9,7 @@
 #include "driver/can.h"
 #include <NextLCD.h>
 #include <Bamocar_can.h>
+#include <DFPlayer.h>
 
 // Do NOT use GPIO 25 and 26, its used by R2DS audio (RELAY2 unusable)
 //  GPIO 16 and 17 are used for Serial2
@@ -36,8 +37,10 @@
 #define APPS1HIGH 2150
 #define APPS2LOW 155
 #define APPS2HIGH 2125
+#define BRAKEPIN 34
+#define BRAKE_LIGHT 33
 
-bool autonomous = false;
+bool autonomous = true;
 bool implausable = false;
 uint8_t autonomous_apps = 0;
 uint8_t state = 0;
@@ -48,6 +51,7 @@ Bamocar_data bamocar(0x181, 0x201); // Bamocar CAN ID's
 can_message_t can_message;
 
 nextlcd lcd(&Serial2);
+musicPlayer mp(&Serial2);
 
 static void can_rx_task(void *args)
 {
@@ -55,12 +59,12 @@ static void can_rx_task(void *args)
   while (1)
   {
     // Wait for message to be received
-    if (can_receive(&message, pdMS_TO_TICKS(10000)) == ESP_OK)
+    if (can_receive(&message, pdMS_TO_TICKS(100)) == ESP_OK)
     {
-      // printf("Message received\n");
+     // printf("Message received\n");
       if (bamocar.parseMessage(message))
       {
-        // printf("Bamocar parsed\n");
+        //printf("Bamocar parsed\n");
       }
       else if (message.identifier == 0x31)
       {
@@ -76,13 +80,6 @@ static void can_rx_task(void *args)
         // printf("ID is %d\n", message.identifier);
         if (!(message.flags & CAN_MSG_FLAG_RTR))
         {
-          if (message.identifier == 0x31)
-          {
-            uint32_t speed = message.data[0] << 24 | message.data[1] << 16 | message.data[2] << 8 | message.data[3];
-            float current;
-            memcpy(&current, &message.data[4], sizeof(current));
-            lcd.writeSensor(speed, current);
-          }
           for (int i = 0; i < message.data_length_code; i++)
           {
             printf("Data byte %d = %d\n", i, message.data[i]);
@@ -101,12 +98,12 @@ static void debug_task(void *args)
 {
   while (1)
   {
-    printf("Voltages: \t%d \t%d\n", bamocar.getBattVoltage(), bamocar.getBusVoltage());
+    //printf("Voltages: \t%d \n",  bamocar.getBusVoltage());
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
 
-#define TSAL_BLINK_HZ 4
+#define TSAL_BLINK_HZ 6
 
 static void blink_red_tsal_async()
 {
@@ -121,14 +118,15 @@ static void blink_red_tsal_async()
 }
 
 void read_apps();
+void read_brake();
 
 static void TSAL_task(void *args)
 {
-  bamocar.requestBattVoltage(200);
+  //bamocar.requestBattVoltage(200);
   bamocar.requestBusVoltage(200);
   while (1)
   {
-    if (bamocar.getBattVoltage() > 60)
+    if (bamocar.getBusVoltage() > 10)
     {
       digitalWrite(TSAL_GREEN, LOW);
       blink_red_tsal_async();
@@ -149,13 +147,20 @@ static void can_tx_task(void *args)
   bamocar.requestStatus(200);
   bamocar.setSoftEnable(false);
   bamocar.requestHardEnabled();
-  while (!bamocar.getHardEnable())
+  /*while (!bamocar.getHardEnable()) burası takılı kalıyor
   {
     vTaskDelay(pdMS_TO_TICKS(100));
-  }
+  }*/
+  
+    bamocar.setSoftEnable(true);
+
 
   while (1)
   {
+    read_apps();//deneme için
+    read_brake();
+
+    bamocar.setSpeed((apps_avg * -0x7fff) / 100);//deneme için
     if (state != last_state && state != 3)
     {
       bamocar.setSoftEnable(false);
@@ -216,12 +221,13 @@ void read_apps()
     apps2 -= correction;
   }
   diff = abs(apps1 - apps2);
+  //printf("APPS: \t%d \t %d \t %d \t %d\n", apps1, apps2, diff, apps_avg);
   if (diff > 10)
   {
     apps_implausable++;
     if (apps_implausable > 2 && millis() - last_plausable_read_time > 100)
     {
-      printf("APPS implausable\n");
+      // printf("APPS implausable\n");
       implausable = true;
     }
   }
@@ -230,6 +236,18 @@ void read_apps()
     apps_implausable = 0;
     last_plausable_read_time = millis();
   }
+}
+
+void read_brake()
+{
+  int brake_level = analogRead(BRAKEPIN);
+  if (brake_level > 10)
+  {
+    digitalWrite(BRAKE_LIGHT, HIGH);
+    printf("Brake Light: ON");
+  }
+
+  printf("Number is: %i\n", brake_level);
 }
 
 void setup()
@@ -246,6 +264,8 @@ void setup()
   pinMode(TSAL_RED, OUTPUT);
   pinMode(ASSI_BLUE, OUTPUT);
   pinMode(ASSI_YELLOW, OUTPUT);
+  pinMode(BRAKE_LIGHT, OUTPUT);
+  pinMode(BRAKEPIN, INPUT);
   // DEFAULT OUTPUTS
   // digitalWrite(COOLING_PUMP, LOW);
   // digitalWrite(COOLING_FAN1, LOW);
@@ -254,8 +274,8 @@ void setup()
   digitalWrite(AIR, LOW);
   digitalWrite(TSAL_GREEN, HIGH);
   digitalWrite(TSAL_RED, LOW);
-  digitalWrite(ASSI_BLUE, LOW);
-  digitalWrite(ASSI_YELLOW, LOW);
+  //digitalWrite(ASSI_BLUE, LOW);
+  //digitalWrite(ASSI_YELLOW, LOW);
   digitalWrite(AMP_EN, HIGH); // Energize the amplifier
   // CANBUS
   can_general_config_t g_config = CAN_GENERAL_CONFIG_DEFAULT(CAND, CANR, CAN_MODE_NORMAL);
@@ -300,6 +320,7 @@ void setup()
   Serial.begin(115200);
   Serial2.begin(9600, SERIAL_8N1, 17, 16);
 
+  delay(15000);
   mp3_setup();
 }
 
@@ -368,7 +389,7 @@ void loop()
     state = 1;
   }
 
-  if (bamocar.getBattVoltage() < 420)
+  if (bamocar.getBattVoltage() < 30)
   {
     state = 1;
     digitalWrite(AIR, LOW);
@@ -380,12 +401,13 @@ void loop()
   {
     state = 2;
     digitalWrite(AIR, HIGH);
-    delay(20);
+    vTaskDelay(pdMS_TO_TICKS(20));
     digitalWrite(PRECHARGE, LOW);
   }
 
   if (!get_r2d_state())
   {
+    mp.playFirst();
     state = 2;
     yield();
     return;

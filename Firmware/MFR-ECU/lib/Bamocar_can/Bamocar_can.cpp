@@ -160,7 +160,7 @@ bool Bamocar_data::requestBattVoltage(uint8_t interval) {
 }
 
 uint16_t Bamocar_data::getBusVoltage() {
-    return _data.DC_BUS_V;
+    return (_data.DC_BUS_V/31.58483 - 3);
 }
 
 bool Bamocar_data::requestBusVoltage(uint8_t interval) {

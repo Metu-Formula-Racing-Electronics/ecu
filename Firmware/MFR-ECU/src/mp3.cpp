@@ -38,6 +38,9 @@ void mp3_setup()
   file1 = new AudioFileSourceSPIFFS("/winstart.mp3");
   file2 = new AudioFileSourceSPIFFS("/Error_siren.mp3");
   mp3 = new AudioGeneratorMP3();
+
+  mp3->begin(file1, out);
+
 }
 
 void mp3_loop()
