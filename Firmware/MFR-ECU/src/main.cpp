@@ -9,6 +9,7 @@
 #include "driver/can.h"
 #include <Bamocar_can.h>
 #include "esp_log.h"
+#include <esp_task_wdt.h>
 
 // Do NOT use GPIO 25 and 26, its used by R2DS audio (RELAY2 unusable)
 //  GPIO 16 and 17 are used for Serial2
@@ -32,10 +33,10 @@
 // APPS Definitions
 #define APPS1PIN 39
 #define APPS2PIN 36
-#define APPS1LOW 150
-#define APPS1HIGH 2150
-#define APPS2LOW 155
-#define APPS2HIGH 2125
+#define APPS1LOW 200
+#define APPS1HIGH 2100
+#define APPS2LOW 200
+#define APPS2HIGH 2100
 #define BRAKEPIN 34
 #define BRAKE_LIGHT 33
 
@@ -45,7 +46,7 @@ uint8_t autonomous_apps = 0;
 uint8_t state = 0;
 int apps_avg = 0;
 uint64_t last_bamocar_rx = 0;
-#define BAMOCAR_TIMEOUT 1000
+#define BAMOCAR_TIMEOUT 5000
 bool apps_reverse = false;
 
 Bamocar_data bamocar(0x181, 0x201); // Bamocar CAN ID's
@@ -65,23 +66,26 @@ static void can_task(void *args)
   can_message_t message;
   while (1)
   {
-    if (can_receive(&message, pdMS_TO_TICKS(1000)) == ESP_OK)
+    if (can_receive(&message, pdMS_TO_TICKS(100)) == ESP_OK)
     {
       if (bamocar.parseMessage(message))
       {
         last_bamocar_rx = millis();
-        return;
+        continue;
       }
     }
   }
 }
+void apps_min_max_print();
 
 static void debug_task(void *args)
 {
   while (1)
   {
-    read_apps();
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    // apps_min_max_print();
+    // read_apps();
+    // ESP_LOGI("CAN", "Last Bamocar RX: %llu", last_bamocar_rx);
+    vTaskDelay(pdMS_TO_TICKS(100));
   }
 }
 
@@ -110,7 +114,7 @@ static void TSAL_task(void *args)
       continue;
     }
 
-    if (bamocar.getBusVoltage() > 10)
+    if (bamocar.getBusVoltage() > 10 && millis() > 3000)
     {
       digitalWrite(TSAL_GREEN, LOW);
       blink_red_tsal_async();
@@ -147,8 +151,8 @@ static void bamocar_init()
   bamocar.requestBusVoltage(200);
   bamocar.requestSpeed(200);
   bamocar.requestStatus(200);
-  bamocar.setSoftEnable(false);
-  bamocar.requestHardEnabled(200);
+  bamocar.setSoftEnable(true);
+  // bamocar.requestHardEnabled(200);
 }
 
 static void motor_control_loop(void *args)
@@ -164,7 +168,10 @@ static void motor_control_loop(void *args)
       continue;
     }
 
-    read_apps(); // deneme için
+    read_apps();                                  // deneme için
+    bamocar.setSpeed((apps_avg * -0x7fff) / 100); // reversed on purpose, its the forward direction
+    yield();
+    continue;
 
     if (apps_implausable && bamocar_enabled) // implausable check
     {
@@ -211,6 +218,26 @@ static void motor_control_loop(void *args)
   }
 }
 
+void apps_min_max_print()
+{
+  static u_int16_t apps1_max = 0;
+  static u_int16_t apps2_max = 0;
+  static u_int16_t apps1_min = 4095;
+  static u_int16_t apps2_min = 4095;
+  u_int16_t apps1 = analogRead(APPS1PIN);
+  u_int16_t apps2 = analogRead(APPS2PIN);
+  if (apps1 < apps1_min)
+    apps1_min = apps1;
+  if (apps2 < apps2_min)
+    apps2_min = apps2;
+  if (apps1 > apps1_max)
+    apps1_max = apps1;
+  if (apps2 > apps2_max)
+    apps2_max = apps2;
+  ESP_LOGI("APPS1", "min: %d, max: %d", apps1_min, apps1_max);
+  ESP_LOGI("APPS2", "min: %d, max: %d", apps2_min, apps2_max);
+}
+
 void read_apps()
 {
   static int apps1 = 0;
@@ -222,15 +249,22 @@ void read_apps()
 
   if (apps_reverse)
   {
-    apps1 = 100 - ((float)constrain(analogRead(APPS2PIN), APPS1LOW, APPS1HIGH) - APPS1LOW) / (APPS1HIGH - APPS1LOW) * 100;
-    apps2 = ((float)constrain(analogRead(APPS1PIN), APPS2LOW, APPS2HIGH) - APPS2LOW) / (APPS2HIGH - APPS2LOW) * 100;
+    // apps1 = 100 - ((float)constrain(analogRead(APPS2PIN), APPS1LOW, APPS1HIGH) - APPS1LOW) / (APPS1HIGH - APPS1LOW) * 100;
+    // apps2 = ((float)constrain(analogRead(APPS1PIN), APPS2LOW, APPS2HIGH) - APPS2LOW) / (APPS2HIGH - APPS2LOW) * 100;
+    apps1 = analogRead(APPS2PIN);
+    apps1 = constrain(apps1, APPS1LOW, APPS1HIGH);
+    apps1 = map(apps1, APPS1LOW, APPS1HIGH, 0, 100);
   }
   else
   {
-    apps1 = 100 - ((float)constrain(analogRead(APPS1PIN), APPS1LOW, APPS1HIGH) - APPS1LOW) / (APPS1HIGH - APPS1LOW) * 100;
-    apps2 = ((float)constrain(analogRead(APPS2PIN), APPS2LOW, APPS2HIGH) - APPS2LOW) / (APPS2HIGH - APPS2LOW) * 100;
+    // apps1 = 100 - ((float)constrain(analogRead(APPS1PIN), APPS1LOW, APPS1HIGH) - APPS1LOW) / (APPS1HIGH - APPS1LOW) * 100;
+    // apps2 = ((float)constrain(analogRead(APPS2PIN), APPS2LOW, APPS2HIGH) - APPS2LOW) / (APPS2HIGH - APPS2LOW) * 100;
+    apps1 = analogRead(APPS2PIN);
+    apps1 = constrain(apps1, APPS1LOW, APPS1HIGH);
+    apps1 = map(apps1, APPS1LOW, APPS1HIGH, 100, 0);
   }
-  apps_avg = (apps1 + apps2) / 2;
+  // apps_avg = (apps1 + apps2) / 2;
+  apps_avg = apps1;
 
   if (apps_avg < 50)
   {
@@ -244,21 +278,23 @@ void read_apps()
     apps1 += correction;
     apps2 -= correction;
   }
-  diff = abs(apps1 - apps2);
-  ESP_LOGI("APPS", "%d %d %d %d", apps1, apps2, diff, apps_avg);
-  if (diff > 10)
-  {
-    apps_implausable_counter++;
-    if (apps_implausable_counter > 3 && millis() - last_plausable_read_time > 100)
-    {
-      apps_implausable = true;
-    }
-  }
-  else
-  {
-    apps_implausable_counter = 0;
-    last_plausable_read_time = millis();
-  }
+  ESP_LOGI("APPS", "%d , %d", apps_avg, analogRead(APPS1PIN));
+
+  // diff = abs(apps1 - apps2);
+  // ESP_LOGI("APPS", "%d %d %d %d", apps1, apps2, diff, apps_avg);
+  // if (diff > 10)
+  // {
+  //   apps_implausable_counter++;
+  //   if (apps_implausable_counter > 3 && millis() - last_plausable_read_time > 100)
+  //   {
+  //     apps_implausable = true;
+  //   }
+  // }
+  // else
+  // {
+  //   apps_implausable_counter = 0;
+  //   last_plausable_read_time = millis();
+  // }
 }
 
 void setup()
@@ -283,14 +319,14 @@ void setup()
   digitalWrite(AMP_EN, HIGH); // Energize the amplifier
 
   read_apps();
-  if (apps_avg < 50)
-  {
-    apps_reverse = false;
-  }
-  else
-  {
-    apps_reverse = true;
-  }
+  // if (apps_avg < 50)
+  // {
+  //   apps_reverse = false;
+  // }
+  // else
+  // {
+  //   apps_reverse = true;
+  // }
 
   can_init();
 
@@ -359,25 +395,25 @@ bool get_r2d_state()
 
 void loop()
 {
-  //mp3_loop();
-
+  // mp3_loop();
+  esp_task_wdt_reset();
   if (!is_bamocar_connected())
   {
     digitalWrite(PRECHARGE, LOW);
     digitalWrite(AIR, LOW);
     state = 0;
+    bamocar_init();
     yield();
-    return;
   }
 
-  if (!get_shutdown_state())
-  {
-    digitalWrite(PRECHARGE, LOW);
-    digitalWrite(AIR, LOW);
-    state = 0;
-    yield();
-    return;
-  }
+  // if (!get_shutdown_state())
+  // {
+  //   digitalWrite(PRECHARGE, LOW);
+  //   digitalWrite(AIR, LOW);
+  //   state = 0;
+  //   yield();
+  //   return;
+  // }
 
   if (state = 0)
   {
@@ -401,17 +437,16 @@ void loop()
     digitalWrite(PRECHARGE, LOW);
   }
 
-  if (!get_r2d_state())
-  {
-    state = 2;
-    yield();
-    return;
-  }
+  // if (!get_r2d_state())
+  // {
+  //   state = 2;
+  //   yield();
+  //   return;
+  // }
 
   if (state == 2)
   {
     state = 3;
+    bamocar.setSoftEnable(true);
   }
-
-  vTaskDelay(pdMS_TO_TICKS(100));
 }
